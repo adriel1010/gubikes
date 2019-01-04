@@ -1,0 +1,63 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/security
+http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+
+	<http auto-config="true" use-expressions="true">  
+		<intercept-url pattern="/cadastro/tipo.jsf/**" access="hasRole('cadastro_tipo')" />
+		<intercept-url pattern="/cadastro/cidade.jsf/**" access="hasRole('cadastro_cidade')" />
+		<intercept-url pattern="/cadastro/bairro.jsf/**" access="hasRole('cadastro_bairro')" /> 
+		<intercept-url pattern="/cadastro/cliente.jsf/**" access="hasRole('cadastro_cliente')" />
+		<intercept-url pattern="/cadastro/funcionario.jsf/**" access="hasRole('cadastro_funcionario')" />
+		<intercept-url pattern="/cadastro/produto.jsf/**" access="hasRole('cadastro_produto')" />
+		<intercept-url pattern="/cadastro/orcamento.jsf/**" access="hasRole('orcamento')" />
+		
+		<intercept-url pattern="/cadastro/inicio.jsf/**" access="hasRole('cadastro_tipo') or hasRole('cadastro_cidade') or hasRole('cadastro_bairro') or hasRole('cadastro_cliente') or hasRole('cadastro_funcionario') or hasRole('cadastro_produto')" />
+
+		 <intercept-url pattern="/cadastro/venda.jsf/**" access="hasRole('vendas')" />
+		 <intercept-url pattern="/cadastro/baixa-parcelas.jsf/**" access="hasRole('baixa_parcela')" />
+		 <intercept-url pattern="/cadastro/entrada-produto.jsf/**" access="hasRole('entrada_produto')" />
+		  <intercept-url pattern="/cadastro/relatorio.jsf/**" access="hasRole('relatorio')" />
+
+		<access-denied-handler error-page="/negado.jsf" />
+		<form-login login-page="/login.jsf"
+			authentication-failure-url="/login.jsf?error=true" />
+	</http>
+
+	<authentication-manager>
+
+
+		<authentication-provider>
+
+			<password-encoder hash="bcrypt" />
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="SELECT pp.usuario as username, 
+                                 ff.senha as password, pp.status as enable, ff.statusFuncionario as enable FROM tab_pessoa pp, tab_funcionario ff WHERE usuario=?"
+
+				authorities-by-username-query="SELECT  d.usuario as username, b.descricao as authority FROM tab_permissao a , tab_tipo b, tab_funcionario c, tab_pessoa d where d.id_pessoa = c.id_pessoa and a.id_funcionario = c.id_funcionario and a.id_tipo = b.id_tipo and a.status = true and d.status = true and c.statusFuncionario = true and d.usuario =?" />
+
+		</authentication-provider>
+
+
+	 
+		
+		
+	</authentication-manager>
+	<beans:bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<beans:property name="url"
+			value="jdbc:mysql://localhost:3306/gubikes" />
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="" />  
+	</beans:bean>
+
+
+
+
+</beans:beans>

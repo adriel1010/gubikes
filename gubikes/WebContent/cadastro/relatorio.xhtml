@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Relatórios</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<p:tabView>
+				<p:tab title="Relatório Vendas Por Dia">
+					<h:form id="RelAluno">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+								<label>Informe a data</label>
+								<p:inputMask mask="99/99/9999" value="#{relatorioMB.data}" />
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioDia()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Fechamento de Mês">
+					<h:form id="relatMes">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+								<label>Informe o mês e o ano</label>
+								<p:inputMask mask="99/9999"
+									value="#{relatorioMB.dataFechamento}" />
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioFechamentoMes()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Compras do Cliente">
+					<h:form id="relatMesEcddddsdsds">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+
+								<p:autoComplete id="clientddds" dropdown="true"
+									value="#{relatorioMB.cliente}" scrollHeight="170"
+									completeMethod="#{relatorioMB.completarCliente}"
+									forceSelection="true" converter="#{converteCliente}" var="cur"
+									itemLabel="#{cur.pessoa.nome}" itemValue="#{cur}">
+
+
+								</p:autoComplete>
+
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioComprasCliente()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+
+				<p:tab title="Relatório Vendas Por Cliente">
+					<h:form id="relatMesEcdddd">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+
+								<p:autoComplete id="client" dropdown="true"
+									value="#{relatorioMB.cliente}" scrollHeight="170"
+									completeMethod="#{relatorioMB.completarCliente}"
+									forceSelection="true" converter="#{converteCliente}" var="cur"
+									itemLabel="#{cur.pessoa.nome}" itemValue="#{cur}">
+
+
+								</p:autoComplete>
+
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioCliente()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Relatório Valor Produtos em Estoque">
+					<h:form id="relatMesEcjjj">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioValoresEstoque()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Fechamento Anual">
+					<h:form id="relatMesxxxx">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+								<label>Informe o Ano</label>
+								<p:inputMask mask="9999" value="#{relatorioMB.dataFechamento}" />
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioFechamentoAno()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+				<p:tab title="Relatório Contas a Receber">
+					<h:form id="relatMesEcjjjsss">
+						<div class="ui-fluid">
+							<div class="col-md-8">
+
+								<p:commandButton value="Imprimir Relatório"
+									title="Imprimir certificado grupo" ajax="false"
+									alt="Imprimir certificado grupo"
+									action="#{relatorioMB.imprimirRelatorioReceber()}"
+									update=":dlgInformacao">
+								</p:commandButton>
+							</div>
+						</div>
+					</h:form>
+				</p:tab>
+
+
+				<p:tab title="Produtos Vendidos">
+					<h:form id="relatMesEcjjjsssssss">
+						<div class="ui-fluid">
+							<div class="col-md-12">
+
+
+								<div class="col-md-12">
+									<label>Informe o mês e o ano</label>
+									<p:inputMask mask="99/9999" value="#{relatorioMB.mesVendas}" />
+									<p:commandButton value="Imprimir Relatório"
+										title="Imprimir certificado grupo" ajax="false"
+										alt="Imprimir certificado grupo"
+										action="#{relatorioMB.buscarVendas()}" update=":dlgInformacao">
+									</p:commandButton>
+								</div>
+
+
+							</div>
+
+							<div class="col-md-12">
+								<label></label>
+							</div>
+						</div>
+
+					</h:form>
+
+
+					<div class="col-md-12">
+						<h:form id="frmTabela">
+							<p:dataTable id="tabela"
+								value="#{relatorioMB.listOrcamentoProdutos}"
+								resizableColumns="true" reflow="true" var="list" rows="10"
+								paginator="true" paginatorPosition="bottom"
+								emptyMessage="Nenhum registro encontrado"
+								rowsPerPageTemplate="5,10,15,30,50,100">
+
+								<p:column headerText="Produto" filterBy="#{list.produto.nome}"
+									sortBy="#{list.produto.nome}" filterMatchMode="contains">
+									<h:outputText value="#{list.produto.nome}" />
+								</p:column>
+
+								<p:column headerText="Preço Unitário"
+									sortBy="#{list.valorUnitario}" filterMatchMode="contains">
+									<h:outputText value="R$ #{list.valorUnitario}">
+										<f:convertNumber pattern="0.00" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Quantidade" filterBy="#{list.quantidade}"
+									sortBy="#{list.quantidade}" filterMatchMode="contains">
+									<h:outputText value="#{list.quantidade}" />
+								</p:column>
+
+								<f:facet name="footer">
+								 Total em Peças vendido: #{relatorioMB.valorEmPecas}
+								 </f:facet>
+
+
+
+
+
+							</p:dataTable>
+						</h:form>
+
+					</div>
+					<!--FIM DA TABELA-->
+
+
+
+				</p:tab>
+
+
+
+
+
+
+
+				<p:tab title="Produtos Vendidos Por Semana">
+					<h:form id="relatMesEcjjjsssssssssdd">
+						<div class="ui-fluid">
+							<div class="col-md-12">
+
+
+								<div class="col-md-12">
+									<label>Informe a data</label>
+									<p:inputMask mask="99/99/9999"
+										value="#{relatorioMB.mesVendasSemana}" />
+									<p:commandButton value="Imprimir Relatório"
+										title="Imprimir certificado grupo" ajax="false"
+										alt="Imprimir certificado grupo"
+										action="#{relatorioMB.buscarVendasSemana()}"
+										update=":dlgInformacao">
+									</p:commandButton>
+								</div>
+
+
+
+
+							</div>
+
+							<div class="col-md-12">
+								<label></label>
+							</div>
+						</div>
+
+					</h:form>
+
+
+					<div class="col-md-12">
+						<h:form id="frmTabelads">
+							<p:dataTable id="tabelasdd"
+								value="#{relatorioMB.listOrcamentoProdutosVender}"
+								resizableColumns="true" reflow="true" var="list" rows="10"
+								paginator="true" paginatorPosition="bottom"
+								emptyMessage="Nenhum registro encontrado"
+								rowsPerPageTemplate="5,10,15,30,50,100">
+
+								<f:facet name="header">
+								 Vendas realizadas de #{relatorioMB.dataBuscar} á #{relatorioMB.mesVendasSemana}
+								 </f:facet>
+
+								<p:column headerText="Produto" filterBy="#{list.produto.nome}"
+									sortBy="#{list.produto.nome}" filterMatchMode="contains">
+									<h:outputText value="#{list.produto.nome}" />
+								</p:column>
+
+								<p:column headerText="Preço Unitário"
+									sortBy="#{list.valorUnitario}" filterMatchMode="contains">
+									<h:outputText value="R$ #{list.valorUnitario}">
+										<f:convertNumber pattern="0.00" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Quantidade" filterBy="#{list.quantidade}"
+									sortBy="#{list.quantidade}" filterMatchMode="contains">
+									<h:outputText value="#{list.quantidade}" />
+								</p:column>
+
+								<f:facet name="footer">
+								 Total em Peças vendido: #{relatorioMB.valorEmPecas}
+								 </f:facet>
+
+
+
+
+
+							</p:dataTable>
+						</h:form>
+
+					</div>
+					<!--FIM DA TABELA-->
+
+
+
+				</p:tab>
+
+
+
+
+				<p:tab title="Porcentagem de vendas">
+
+
+					<h:form id="relatfffsdsd">
+						<div class="ui-fluid">
+							<div class="col-md-12">
+
+
+								<div class="col-md-12">
+									<label>Informe o ano</label>
+									<p:inputMask mask="9999"
+										value="#{relatorioGraficoMB.dataFechamento}" />
+									<p:commandButton value="Gerar Gráfico"
+										title="Imprimir certificado grupo" ajax="false"
+										alt="Imprimir certificado grupo"
+										action="#{relatorioGraficoMB.verificaMontagem()}"
+										update=":formGrafico">
+									</p:commandButton>
+								</div>
+
+
+
+
+							</div>
+
+							<div class="col-md-12">
+								<label></label>
+							</div>
+						</div>
+
+					</h:form>
+
+
+					<div class="ui-fluid">
+						<div class="col-md-12">
+
+
+							<h:form id="formGrafico">
+								<p:chart  type="line" id="dd" rendered="#{relatorioGraficoMB.sumirGrafico}" model="#{relatorioGraficoMB.areaModel}"
+									style="height:300px; font-size:25px;" responsive="true" datatipFormat="#{relatorioGraficoMB.datatipFormatIntegers}" />
+							</h:form>
+							
+							<spam>OBS: Os valores apontados nos pontos estão sendo exibidos em porcentagem</spam>
+
+						</div>
+					</div>
+				</p:tab>
+
+
+			</p:tabView>
+
+
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

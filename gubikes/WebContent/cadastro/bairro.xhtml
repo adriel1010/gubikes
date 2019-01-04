@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Bairro</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<!-- BOTÃO CADASTRAR -->
+			<div class="row container-fluid">
+				<div class="col-md-12">
+					<ol class="breadcrumb">
+						<h:form id="frmCadastrar">
+							<p:commandButton value="Cadastrar" update="frmModalSalvar"
+								actionListener="#{bairroMB.criarNovoObjeto()}"
+								onclick="PF('dlgBairro').show(); PF('dlgBairro').content.scrollTop('0')"
+								title="Cadastrar" />
+						</h:form>
+					</ol>
+				</div>
+			</div>
+			<!-- FIM DO BOTÃO CADASTRAR -->
+			<!-- TABELA-->
+			<div class="col-md-12">
+				<h:form id="frmTabela">
+					<p:dataTable id="tabela" value="#{bairroMB.listBairro}"
+						resizableColumns="true" reflow="true" var="list" rows="10"
+						paginator="true" paginatorPosition="bottom"
+						emptyMessage="Nenhum registro encontrado"
+						rowsPerPageTemplate="5,10,15,30,50,100">
+						
+						<p:column headerText="Ver" style="width:50px">
+							<p:commandButton update="frmDetalhesBairro"
+								styleClass="btn btn-block" title="Ver" alt="detlhes funcionario"
+								icon="ui-icon-search" oncomplete="PF('dlgDetalhes').show()">
+								<f:setPropertyActionListener value="#{list}"
+									target="#{bairroMB.bairro}" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Bairro" filterBy="#{list.nome}"
+							sortBy="#{list.nome}" filterMatchMode="contains">
+							<h:outputText value="#{list.nome}" />
+						</p:column>
+
+						<p:column headerText="Cidade" filterBy="#{list.cidade.nome}"
+							sortBy="#{list.cidade.nome}" filterMatchMode="contains">
+							<h:outputText value="#{list.cidade.nome}" />
+						</p:column>
+
+						<p:column headerText="Alterar" style="width:68px">
+							<p:commandButton alt="Alterar" icon="ui-icon-pencil"
+								update=":frmModalSalvar" title="Alterar"
+								styleClass="btn btn-block" oncomplete="PF('dlgBairro').show();"
+								actionListener="#{bairroMB.preencherLista(list)}">
+
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Excluir" style="width:68px">
+							<p:commandButton icon="ui-icon-trash" title="Excluir"
+								actionListener="#{bairroMB.inativarBairro(list)}"
+								styleClass="btn btn-block" update=":frmTabela :dlgInformacao"
+								alt="Excluir">
+								<p:confirm header="Confirmação" message="Deseja excluir?" />
+							</p:commandButton>
+						</p:column>
+
+
+
+					</p:dataTable>
+				</h:form>
+
+			</div>
+			<!--FIM DA TABELA-->
+
+			<!-- DIALOG SALVAR -->
+			<p:dialog header="Bairro" widgetVar="dlgBairro" modal="true"
+				responsive="true" width="60%" id="dlgBairro" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+				<h:form id="frmModalSalvar">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<label>Nome: *</label>
+							<p:inputText title="Nome" value="#{bairroMB.bairro.nome}"
+								required="true" requiredMessage="Informe o nome do Bairro" />
+						</div>
+
+						<div class="col-md-12">
+							<label>Cidade: </label>
+							<p:selectOneMenu id="estado" value="#{bairroMB.bairro.cidade}"
+								required="true" requiredMessage="selecione uma Cidade"
+								converter="#{converterCidade}">
+								<f:selectItem itemLabel="Selecione uma Cidade" />
+								<f:selectItems value="#{bairroMB.listCidade}" var="cid"
+									itemValue="#{cid}" itemLabel="#{cid.nome}" />
+							</p:selectOneMenu>
+
+						</div>
+
+
+						<small>Campos obrigatórios *</small>
+					</div>
+					<div class="modal-footer">
+						<p:commandButton value="Salvar"
+							actionListener="#{bairroMB.salvar()}"
+							styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmTabela" />
+
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgBairro').hide();" alt="Cancelar" />
+					</div>
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG SALVAR -->
+
+
+
+			<!-- DIALOG DETALHES -->
+			<p:dialog header="Bairro" widgetVar="dlgDetalhes" modal="true"
+				closeOnEscape="true" resizable="false" closable="true"
+				draggable="false">
+				<p:outputPanel id="bairroDetalhe">
+					<h:form id="frmDetalhesBairro">
+						<h:panelGrid columns="2">
+							<label>Nome: </label>
+							<h:outputText value="#{bairroMB.bairro.nome}" />
+
+							<label>Cidade: </label>
+							<h:outputText value="#{bairroMB.bairro.cidade.nome}" />
+							
+							<label>Estado: </label>
+							<h:outputText value="#{bairroMB.bairro.cidade.estado}" />
+
+							 
+						</h:panelGrid>
+					</h:form>
+				</p:outputPanel>
+			</p:dialog>
+			<!-- FIM DO DIALOG DETALHES -->
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

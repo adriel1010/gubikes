@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Entrada Produto</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<!-- BOTÃO CADASTRAR -->
+			<div class="row container-fluid">
+				<div class="col-md-12">
+					<ol class="breadcrumb">
+						<h:form id="frmCadastrar">
+							<p:commandButton value="Cadastrar" update="frmModalSalvar"
+								actionListener="#{entradaMB.criarNovoObjeto()}"
+								onclick="PF('dlgProduto').show(); PF('dlgProduto').content.scrollTop('0')"
+								title="Cadastrar" />
+						</h:form>
+					</ol>
+				</div>
+			</div>
+			<!-- FIM DO BOTÃO CADASTRAR -->
+			<!-- TABELA-->
+			<div class="col-md-12">
+				<h:form id="frmTabela">
+					<p:dataTable id="tabela" value="#{entradaMB.listEntrada}"
+						resizableColumns="true" reflow="true" var="list" rows="10"
+						paginator="true" paginatorPosition="bottom"
+						emptyMessage="Nenhum registro encontrado"
+						rowsPerPageTemplate="5,10,15,30,50,100">
+
+						<p:column headerText="Ver" style="width:50px">
+							<p:commandButton update=":frmDetalhes" styleClass="btn btn-block"
+								title="Ver" alt="detlhes certificado" icon="ui-icon-search"
+								oncomplete="PF('dlgParcelas').show()">
+								<f:setPropertyActionListener value="#{list}"
+									target="#{entradaMB.entrada}" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Local Compra" filterBy="#{list.localCompra}"
+							sortBy="#{list.localCompra}" filterMatchMode="contains">
+							<h:outputText value="#{list.localCompra}" />
+						</p:column>
+
+						<p:column headerText="Valor Compra" sortBy="#{list.valorCompra}"
+							filterMatchMode="contains">
+							<h:outputText value="R$ #{list.valorCompra}">
+								<f:convertNumber pattern="0.00" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Data">
+							<h:outputText value="#{list.dataCompra}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Excluir" style="width:68px">
+							<p:commandButton actionListener="#{entradaMB.excluir(list)}"
+								icon="ui-icon-trash" title="Excluir" styleClass="btn btn-block"
+								update="frmTabela :dlgInformacao" alt="Excluir">
+								<p:confirm header="Confirmação" 
+									message="Desejá excluir esse orçamento" />
+							</p:commandButton>
+						</p:column>
+
+
+					</p:dataTable>
+				</h:form>
+
+			</div>
+			<!--FIM DA TABELA-->
+
+			<!-- DIALOG SALVAR -->
+			<p:dialog header="Produto" widgetVar="dlgProduto" modal="true"
+				responsive="true" width="60%" id="dlgProduto" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+				<h:form id="frmModalSalvar">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<label>Nome Local Compra: *</label>
+							<p:inputText title="Nome"
+								value="#{entradaMB.entrada.localCompra}" required="true"
+								requiredMessage="Informe o nome do Local" />
+						</div>
+
+						<div class="col-md-12">
+							<label>Valor Compra: *</label>
+							<p:inputText title="Nome" id="compra"
+								value="#{entradaMB.entrada.valorCompra}" maxlength="8"
+								required="true" requiredMessage="Informe o valor de compra"
+								converterMessage="Informe um valor válido para o campo preço compra"
+								validatorMessage="Informe um valor entre 0,01 e 99999,99 para o campo  valor compra">
+								<f:convertNumber pattern="0.00" />
+								<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+
+
+
+							</p:inputText>
+						</div>
+
+						<small>Campos obrigatórios *</small>
+					</div>
+					<div class="modal-footer">
+						<p:commandButton value="Salvar"
+							actionListener="#{entradaMB.salvar()}"
+							styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmTabela" />
+
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgProduto').hide();" alt="Cancelar" />
+					</div>
+				</h:form>
+
+
+			</p:dialog>
+			<!-- FIM DO DIALOG SALVAR -->
+
+
+			<!-- DIALOG DETALHES -->
+			<p:dialog header="Detalhe - Entrada" widgetVar="dlgParcelas"
+				responsive="true" modal="true" closeOnEscape="true"
+				resizable="false" closable="true" draggable="false">
+				<p:outputPanel id="atividadeDetalhe">
+					<h:form id="frmDetalhes">
+						<h:panelGrid columns="2">
+							<label>Código: </label>
+							<h:outputText value="#{entradaMB.entrada.id}" />
+
+							<label>Data: </label>
+							<h:outputText value="#{entradaMB.entrada.dataCompra}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+
+							<label>Local Compra: </label>
+							<h:outputText value="#{entradaMB.entrada.localCompra}" />
+
+							<label>Valor Compra: </label>
+							<h:outputText value="#{entradaMB.entrada.valorCompra}" />
+
+
+						</h:panelGrid>
+					</h:form>
+				</p:outputPanel>
+			</p:dialog>
+			<!-- FIM DO DIALOG DETALHES -->
+
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

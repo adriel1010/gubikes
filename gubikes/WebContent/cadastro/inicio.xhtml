@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm-bem-vindo.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+		<ui:define name="conteudo">
+	             <p:growl id="dlgExpira" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+	                <p:growl id="dlgExpiras" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+	                   <p:growl id="dlgExpidra" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+
+			<f:metadata>
+				<f:event type="preRenderView" listener="#{controleMB.controleVencimento()}" />
+			</f:metadata>
+
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">
+						<i class="fa fa-hourglass-half" aria-hidden="true"></i> Seja
+						bem-vindo
+					</h1>
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+
+
+
+
+		</ui:define>
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

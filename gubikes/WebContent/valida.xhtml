@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="resources/template/template-padrao.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="componentes/mensagem.xhtml" />
+		</ui:define>
+		<ui:define name="conteudo">
+	             <p:growl id="dlgExpirssssssa" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+	                <p:growl id="dlgExpiras" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+	                   <p:growl id="dlgExpidra" showDetail="false" autoUpdate="true" sticky="false" life="20000"/>
+
+
+		<div class="container-fluid">
+			<div style="margin-top: 5%;"
+				class="col-md-4 col-md-offset-4 col-sm-10 col-sm-offset-2">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">GUBIKES</div>
+					</div>
+					<div style="padding-top: 30px" class="panel-body">
+
+
+						<h:panelGrid columns="1" styleClass="col-md-12  col-xs-12">
+							<h:form id="frmModalSalvar">
+
+								<div class="ui-fluid">
+									<div class="col-md-12">
+										<label>Código de Validação: *</label>
+										<p:inputText title="Nome"
+											value="#{controleMB.codigoPavaAtiva}" required="true"
+											requiredMessage="Informe o Código" />
+									</div>
+
+								</div>
+								<div class="modal-footer">
+									<p:commandButton value="Salvar" update="dlgExpidra"
+										actionListener="#{controleMB.valida()}"
+										styleClass="ui-priority-primary" />
+
+								</div>
+							</h:form>
+
+
+						</h:panelGrid>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

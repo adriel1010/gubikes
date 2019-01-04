@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Produto</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<!-- BOTÃO CADASTRAR -->
+			<div class="row container-fluid">
+				<div class="col-md-12">
+					<ol class="breadcrumb">
+						<h:form id="frmCadastrar">
+							<p:commandButton value="Cadastrar" update="frmModalSalvar"
+								actionListener="#{produtoMB.criarNovoObjeto()}"
+								onclick="PF('dlgProduto').show(); PF('dlgProduto').content.scrollTop('0')"
+								title="Cadastrar" />
+						</h:form>
+					</ol>
+				</div>
+			</div>
+			<!-- FIM DO BOTÃO CADASTRAR -->
+			<!-- TABELA-->
+			<div class="col-md-12">
+				<h:form id="frmTabela">
+					<p:dataTable id="tabela" value="#{produtoMB.listProduto}"
+						resizableColumns="true" reflow="true" var="list" rows="10"
+						paginator="true" paginatorPosition="bottom"
+						emptyMessage="Nenhum registro encontrado"
+						rowsPerPageTemplate="5,10,15,30,50,100">
+
+						<p:column headerText="Produto" filterBy="#{list.nome}"
+							sortBy="#{list.nome}" filterMatchMode="contains">
+							<h:outputText value="#{list.nome}" />
+						</p:column>
+						
+					 
+						
+						<p:column headerText="Preço Venda" 
+							sortBy="#{list.valorVenda}" filterMatchMode="contains">
+							<h:outputText value="R$ #{list.valorVenda}" >
+								<f:convertNumber  pattern="0.00"/>
+							</h:outputText>
+						</p:column>
+						 
+						  
+						<p:column headerText="Alterar" style="width:68px">
+							<p:commandButton alt="Alterar" icon="ui-icon-pencil"
+								update=":frmModalSalvar" title="Alterar"
+								styleClass="btn btn-block" oncomplete="PF('dlgProduto').show();"
+								actionListener="#{produtoMB.preencherLista(list)}"
+								disable="#{list.nome == 'MÃO DE OBRA'}"
+								>
+
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Excluir" style="width:68px">
+							<p:commandButton icon="ui-icon-trash" title="Excluir"
+								actionListener="#{produtoMB.inativarProduto(list)}"
+								styleClass="btn btn-block" update=":frmTabela :dlgInformacao"
+								alt="Excluir" disable="#{list.nome == 'MÃO DE OBRA'}">
+								<p:confirm header="Confirmação" message="Deseja excluir?" />
+							</p:commandButton>
+						</p:column>
+
+
+
+					</p:dataTable>
+				</h:form>
+
+			</div>
+			<!--FIM DA TABELA-->
+
+			<!-- DIALOG SALVAR -->
+			<p:dialog header="Produto" widgetVar="dlgProduto" modal="true"
+				responsive="true" width="60%" id="dlgProduto" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+				<h:form id="frmModalSalvar">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<label>Nome: *</label>
+							<p:inputText title="Nome" value="#{produtoMB.produto.nome}" onkeypress="if(event.keyCode===13){document.getElementById('frmModalSalvar:compra').focus();return false;}"
+								required="true" requiredMessage="Informe o nome do Produto" />
+						</div>
+
+						<div class="col-md-4">
+							<label>Valor Compra: *</label>
+							<p:inputText title="Nome" id="compra" onkeypress="if(event.keyCode===13){document.getElementById('frmModalSalvar:venda').focus();return false;}"
+								value="#{produtoMB.produto.valorCompra}" maxlength="8"
+								required="true" requiredMessage="Informe o valor de compra"
+								converterMessage="Informe um valor válido para o campo preço compra"
+								validatorMessage="Informe um valor entre 0,01 e 99999,99 para o campo  valor compra">
+								<f:convertNumber pattern="0.00" />
+								<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+								<p:ajax event="blur"  process="compra"  />
+
+
+							</p:inputText>
+						</div>
+
+
+						<div class="col-md-4">
+							<label>Porcentagem: *</label>
+							<p:inputText title="Nome" required="true" id="porct" onkeypress="if(event.keyCode===13){document.getElementById('frmModalSalvar:venda').focus();return false;}"
+								requiredMessage="Informe a porcentagem" value="#{produtoMB.porcent}" >
+								<f:convertNumber  pattern="0.00" />
+								<p:ajax event="blur" listener="#{produtoMB.calcula()}" process="porct"  update=":frmModalSalvar:venda"/>
+								
+								
+								</p:inputText>
+						</div>
+
+
+
+
+
+						<div class="col-md-4">
+							<label>Valor Venda: *</label>
+							<p:inputText title="Nome" value="#{produtoMB.produto.valorVenda}"
+								maxlength="8" required="true" id="venda" onkeypress="if(event.keyCode===13){document.getElementById('frmModalSalvar:quant').focus();return false;}"
+								requiredMessage="Informe o Valor de venda"
+								converterMessage="Informe um valor válido para o campo preço Venda"
+								validatorMessage="Informe um valor entre 0,01 e 99999,99 para o campo  valor venda">
+								<f:convertNumber pattern="0.00" />
+								<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+								
+								<p:ajax event="blur" listener="#{produtoMB.calculaPorcentagem()}" process="venda"  update=":frmModalSalvar:porct"/>
+
+							</p:inputText>
+						</div>
+						
+							
+
+						<div class="col-md-12">
+							<label>Quantidade: *</label>
+							<p:inputText title="Nome" value="#{produtoMB.produto.quantidade}"
+								required="true" requiredMessage="Informe a Quantidade" id="quant"
+								validatorMessage="Informe um valor maior que 0 para o campo quantidade"
+								converterMessage="Informe um valor válido para o campo quantidade">
+
+								<f:validateLongRange minimum="0" />
+
+
+							</p:inputText>
+						</div>
+
+
+
+						<small>Campos obrigatórios *</small>
+					</div>
+					<div class="modal-footer">
+						<p:commandButton value="Salvar"
+							actionListener="#{produtoMB.salvar()}"
+							styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmTabela" />
+
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgProduto').hide();" alt="Cancelar" />
+					</div>
+				</h:form>
+
+
+			</p:dialog>
+			<!-- FIM DO DIALOG SALVAR -->
+
+ 
+
+
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

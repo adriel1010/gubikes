@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Baixa Parcelas</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<!-- TABELA-->
+			<div class="col-md-12">
+				<h:form id="frmTabela">
+					<p:dataTable id="tabela" resizableColumns="true" reflow="true"
+						rows="10" paginator="true" paginatorPosition="bottom"
+						emptyMessage="Nenhum registro encontrado"
+						value="#{baixaParcelaMB.listVendaPraso}" var="lit"
+						rowsPerPageTemplate="5,10,15,30,50,100">
+
+						<p:column headerText="Ver" style="width:50px">
+							<p:commandButton
+								update=":frmParcelaDetalhe :frmTabelaParcelaDetalhe"
+								styleClass="btn btn-block" title="Ver" alt="detlhes certificado"
+								icon="ui-icon-search"
+								oncomplete="PF('dlgParcelamentoDetalhe').show()"
+								actionListener="#{baixaParcelaMB.carregarDados(lit)}">
+
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="PDF" style="width:68px">
+							<p:commandButton icon="ui-icon-print" title="Imprimir "
+								ajax="false" alt="Imprimir"
+								action="#{relatorioMB.imprimirRelatorioClienteParcelado(lit)}"
+								update=":dlgInformacao">
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Promissória" style="width:110px">
+							<p:commandButton icon="ui-icon-print" title="Imprimir "
+								ajax="false" alt="Imprimir"
+								action="#{relatorioMB.imprimirRelatorioClientePromissoria(lit)}"
+								update=":dlgInformacao">
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Código">
+							<h:outputText value="#{lit.id}" />
+						</p:column>
+
+						<p:column headerText="Cliente"
+							filterBy="#{lit.orcamento.cliente.pessoa.nome}">
+							<h:outputText value="#{lit.orcamento.cliente.pessoa.nome}" />
+						</p:column>
+
+						<p:column headerText="Situação">
+							<h:outputText value="#{lit.situacao}" />
+						</p:column>
+
+
+
+						<p:column headerText="Baixa Parcela" style="width:150px">
+							<p:commandButton update="frmParcela :frmTabelaParcela"
+								styleClass="btn btn-block" title="Ver" alt="detlhes certificado"
+								icon="ui-icon-check" oncomplete="PF('dlgParcelamento').show()"
+								actionListener="#{baixaParcelaMB.carregarDados(lit)}">
+
+							</p:commandButton>
+						</p:column>
+
+
+
+					</p:dataTable>
+				</h:form>
+
+			</div>
+			<!--FIM DA TABELA-->
+
+
+
+			<!-- DIALOG DETALHES -->
+			<p:dialog header="Detalhe - Parcelas" widgetVar="dlgDetalhes"
+				responsive="true" modal="true" closeOnEscape="true"
+				resizable="false" closable="true" draggable="false">
+				<p:outputPanel id="atividadeDetalhe">
+					<h:form id="frmDetalhes">
+						<h:panelGrid columns="2">
+							<label>Código: </label>
+							<h:outputText value="#{baixaParcelaMB.parcela.id}" />
+
+							<label>Situação: </label>
+							<h:outputText value="#{baixaParcelaMB.parcela.situacao}" />
+
+							<label>Quantidade Parcelas: </label>
+							<h:outputText
+								value="#{baixaParcelaMB.parcela.quantidadeParcelas}" />
+
+							<label>Valor Parcela: </label>
+							<h:outputText value="#{baixaParcelaMB.parcela.valorParcela}" />
+
+
+						</h:panelGrid>
+					</h:form>
+				</p:outputPanel>
+			</p:dialog>
+			<!-- FIM DO DIALOG DETALHES -->
+
+
+
+			<!-- DIALOG Parcela -->
+			<p:dialog header="Baixa - Parcelamento" widgetVar="dlgParcelamento"
+				modal="true" responsive="true" width="60%" id="dlgParcelamento"
+				closable="true" closeOnEscape="true" resizable="false"
+				draggable="false">
+
+				<h:form id="frmParcela">
+					<div class="ui-fluid">
+						<div class="col-md-6">
+							<label>Código Venda </label>
+						</div>
+						<div class="col-md-6">
+							<label>Data Venda </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="cod"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.id}" readonly="true" />
+
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="valor"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.dataVenda}"
+								readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+
+						</div>
+
+						<div class="col-md-12">
+							<label>Valor Total: </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="Quantidade"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.orcamento.subTotalOrcamento}"
+								readonly="true" />
+
+						</div>
+					</div>
+				</h:form>
+				<h:form id="frmTabelaParcela">
+					<div class="ui-fluid">
+
+						<div class="col-md-6">
+							<label> </label>
+						</div>
+
+						<div class="col-md-12">
+							<label></label>
+							<p:dataTable id="tabelaproduto" resizableColumns="true"
+								value="#{baixaParcelaMB.listParcelaVendaBaixar}" reflow="true"
+								var="itens" paginatorPosition="bottom"
+								emptyMessage="Nenhuma parcela encontrada">
+
+								<p:column headerText="Código" style="width:68px">
+									<h:outputText value="#{itens.numeroParcela}" />
+								</p:column>
+								<p:column headerText="Valor parcela" style="width:100px">
+									<h:outputText value="#{itens.valorParcela}" />
+								</p:column>
+
+								<p:column headerText="Situação">
+									<h:outputText value="#{itens.situacao}" />
+								</p:column>
+
+								<p:column headerText="Data Vencimento">
+									<h:outputText value="#{itens.data}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Data Pagamento">
+									<h:outputText value="#{itens.dataPagamento}">
+
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Baixa Parcela" style="width:120px">
+									<p:commandButton update=":frmPagamento :frmTabela"
+										rendered="#{itens.situacao != 'PAGO'}"
+										styleClass="btn btn-block" title="Ver"
+										alt="detlhes certificado" icon="ui-icon-pencil"
+										oncomplete="PF('dlgParcelamentoPagamento').show();">
+										<f:setPropertyActionListener value="#{itens}"
+											target="#{baixaParcelaMB.parcela}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</div>
+
+					</div>
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG Parcela -->
+
+
+			<!-- DIALOG Parcela -->
+			<p:dialog header="DetalheParcela" widgetVar="dlgParcelamentoDetalhe"
+				modal="true" responsive="true" width="60%" id="dlgParcelamentoGG"
+				closable="true" closeOnEscape="true" resizable="false"
+				draggable="false">
+
+				<h:form id="frmParcelaDetalhe">
+					<div class="ui-fluid">
+						<div class="col-md-6">
+							<label>Código Venda </label>
+						</div>
+						<div class="col-md-6">
+							<label>Data Venda </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="cod"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.id}" readonly="true" />
+
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="valor"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.dataVenda}"
+								readonly="true">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+
+						</div>
+
+						<div class="col-md-6">
+							<label>Valor Total: </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:outputLabel value="Reparcelar" />
+
+						</div>
+
+
+						<div class="col-md-6">
+							<p:inputText title="Quantidade"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.orcamento.subTotalOrcamento}"
+								readonly="true" />
+
+						</div>
+						<div class="col-md-6">
+							<p:commandButton disabled="#{ ! baixaParcelaMB.sumirReparcelar}"
+								update=":frmParcelaReparcela :frmTabelaParcelaReparcela" actionListener="#{baixaParcelaMB.limpa()}"
+								oncomplete="PF('dlgParcelamentoReparcela').show();"
+								value="Reparcelar" />
+
+						</div>
+					</div>
+				</h:form>
+				<h:form id="frmTabelaParcelaDetalhe">
+					<div class="ui-fluid">
+
+						<div class="col-md-6">
+							<label> </label>
+						</div>
+
+						<div class="col-md-12">
+							<label></label>
+							<p:dataTable id="tabelaprodutoff" resizableColumns="true"
+								value="#{baixaParcelaMB.listParcelaVendaBaixar}" reflow="true"
+								var="itens" paginatorPosition="bottom"
+								emptyMessage="Nenhuma parcela encontrada">
+
+								<p:column headerText="Código" style="width:68px">
+									<h:outputText value="#{itens.numeroParcela}" />
+								</p:column>
+								<p:column headerText="Valor parcela" style="width:100px">
+									<h:outputText value="#{itens.valorParcela}" />
+								</p:column>
+
+								<p:column headerText="Situação">
+									<h:outputText value="#{itens.situacao}" />
+								</p:column>
+
+								<p:column headerText="Data Vencimento">
+									<h:outputText value="#{itens.data}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Data Pagamento">
+									<h:outputText value="#{itens.dataPagamento}">
+
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+
+							</p:dataTable>
+						</div>
+
+					</div>
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG Parcela -->
+
+
+			<!-- DIALOG Parcela -->
+			<p:dialog header="Baixa - Parcelamento"
+				widgetVar="dlgParcelamentoPagamento" modal="true" responsive="true"
+				width="60%" id="dlgParcelamentoPagamento" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+
+				<h:form id="frmPagamento">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<label>Valor Parcela </label>
+							<p:inputText title="cod"
+								value="#{baixaParcelaMB.parcela.valorParcela}" readonly="true" />
+						</div>
+						<div class="col-md-12">
+							<label>Valor Pago </label>
+							<p:inputText title="cod" value="#{baixaParcelaMB.valorPago}">
+								<f:convertNumber pattern="0.00" />
+								<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+							</p:inputText>
+						</div>
+
+					</div>
+
+					<div class="modal-footer">
+						<p:commandButton value="Baixar" styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmPagamento :frmTabelaParcela :frmTabela"
+							actionListener="#{baixaParcelaMB.baixarParcela()}" />
+
+
+					</div>
+				</h:form>
+
+			</p:dialog>
+			<!-- FIM DO DIALOG Parcela -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			<!-- DIALOG Parcela -->
+			<p:dialog header="Parcelamento Venda"
+				widgetVar="dlgParcelamentoReparcela" modal="true" responsive="true"
+				width="60%" id="dlgParcelamentoReparcela" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+
+
+
+
+				<h:form id="frmParcelaReparcela">
+					<div class="ui-fluid">
+						<div class="col-md-6">
+							<label>Código Venda </label>
+						</div>
+						<div class="col-md-6">
+							<label>Data Venda </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="cod" value="#{baixaParcelaMB.parcelaBaixaVenda.id}"
+								readonly="true" />
+
+						</div>
+
+						<div class="col-md-6">
+							<p:inputMask title="valor" mask="99/99/9999" id="dataParc"
+								value="#{baixaParcelaMB.dataGerarParcela}" required="true"
+								requiredMessage="Informe a Data">
+
+							</p:inputMask>  
+
+						</div>
+
+						<div class="col-md-6">
+							<label>Quantidade Parcela </label>
+						</div>
+						<div class="col-md-6">
+							<label>Valor Total: </label>
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="Quantidade"
+								value="#{baixaParcelaMB.parcelaGerarDuplicatas.quantidadeParcelas}"
+								required="true"
+								requiredMessage="Informe a quantidade de parcelas" />
+
+						</div>
+
+						<div class="col-md-6">
+							<p:inputText title="Quantidade" id="vall"
+								value="#{baixaParcelaMB.parcelaBaixaVenda.orcamento.subTotalOrcamento}"
+								readonly="true" /> 
+
+						</div>
+
+						<div class="col-md-12">
+							<label>Valor Entrada </label>
+							<p:inputText title="Quantidade" required="true"
+								requiredMessage="Informe o valor de entrada" id="valEntr"
+								value="#{baixaParcelaMB.valorEntrada}"> 
+								<f:convertNumber pattern="0.00" />
+							</p:inputText>
+						</div>
+
+
+						<div class="col-md-12">
+							<label> </label>
+						</div>
+
+
+
+					</div>
+					<div class="modal-footer">
+
+						<div class="col-md-12">
+							<label> </label>
+						</div>
+						<p:commandButton value="Parcelar" styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmParcelaReparcela:vall :frmParcelaReparcela:config :frmTabelaParcelaReparcela"
+							actionListener="#{baixaParcelaMB.gerarDuplicatas()}" />
+ 
+
+						<p:commandButton id="config" value="Gerar Duplicatas"
+							disabled="#{baixaParcelaMB.desabilitaParcela}"
+							styleClass="ui-priority-primary" 
+							actionListener="#{baixaParcelaMB.salvarDuplicatas()}"
+							update=":dlgInformacao :frmTabela" />
+					</div>
+
+				</h:form>
+
+
+				<h:form id="frmTabelaParcelaReparcela">
+					<div class="ui-fluid">
+
+						<div class="col-md-6">
+							<label> </label>
+						</div>
+
+						<div class="col-md-12">
+							<label></label>
+							<p:dataTable id="tabelaprodutoReparcela" resizableColumns="true"
+								value="#{baixaParcelaMB.listParcelaVendaGerar}" reflow="true"
+								var="itens" paginatorPosition="bottom"
+								emptyMessage="Nenhuma parcela encontrada">
+
+								<p:column headerText="Número" style="width:68px">
+									<h:outputText value="#{itens.numeroParcela}" />
+								</p:column>
+								<p:column headerText="Valor parcela" style="width:100px">
+									<h:outputText value="#{itens.valorParcela}" />
+								</p:column>
+								<p:column headerText="Data Vencimento" style="width:100px">
+									<h:outputText value="#{itens.data}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable> 
+						</div>
+
+					</div>
+
+
+
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG Parcela -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+

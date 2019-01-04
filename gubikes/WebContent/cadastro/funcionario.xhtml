@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+	<ui:composition template="../resources/template/template-adm.xhtml">
+		<ui:define name="mensagem">
+			<ui:include src="../componentes/mensagem.xhtml" />
+		</ui:define>
+
+		<ui:define name="conteudo">
+			<!-- TITULO -->
+			<div class="row">
+				<div class="col-md-12">
+					<h1 class="page-header">Funcionário</h1>
+
+				</div>
+			</div>
+			<!-- FIM TITULO -->
+
+			<!-- BOTÃO CADASTRAR -->
+			<div class="row container-fluid">
+				<div class="col-md-2">
+					<ol class="breadcrumb">
+						<h:form id="frmCadastrar">
+							<p:commandButton value="Cadastrar" update="frmModalSalvar :frmModalTabelaPermissao :frmModalAdicionarPermissao"
+								actionListener="#{funcionarioMB.criarNovoObjeto()}"
+								onclick="PF('dlgCliente').show(); PF('dlgCliente').content.scrollTop('0')"
+								title="Cadastrar" />
+						</h:form>
+					</ol>
+				</div>
+			</div>
+
+			<!-- FIM DO BOTÃO CADASTRAR -->
+
+
+			<!-- TABELA-->
+			<div class="col-md-12">
+				<h:form id="frmTabela">
+					<p:wizard backLabel="Anterior" nextLabel="Próximo">
+						<p:tab id="ativo" title="Ativos">
+							<p:panel header="Ativos">
+								<h:panelGrid columns="2" cellpadding="10">
+									<p:dataTable id="tabela"
+										value="#{funcionarioMB.listFuncionario}"
+										resizableColumns="true" reflow="true" var="list" rows="10"
+										paginator="true" paginatorPosition="bottom"
+										emptyMessage="Nenhum registro encontrado"
+										rowsPerPageTemplate="5,10,15,30,50,100">
+
+										<p:column headerText="Ver" style="width:50px">
+											<p:commandButton update="frmDetalhesFuncionario"
+												styleClass="btn btn-block" title="Ver"
+												alt="detlhes funcionario" icon="ui-icon-search"
+												oncomplete="PF('dlgDetalhes').show()">
+												<f:setPropertyActionListener value="#{list}"
+													target="#{funcionarioMB.funcionario}" />
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="nome" filterBy="#{list.pessoa.nome}"
+											sortBy="#{list.pessoa.nome}" filterMatchMode="contains">
+											<h:outputText value="#{list.pessoa.nome}" />
+										</p:column>
+
+										<p:column headerText="RG" filterBy="#{list.pessoa.rg}"
+											sortBy="#{list.pessoa.rg}" filterMatchMode="contains">
+											<h:outputText value="#{list.pessoa.rg}" />
+										</p:column>
+
+										<p:column headerText="CPF" filterBy="#{list.pessoa.cpf}"
+											sortBy="#{list.pessoa.cpf}" filterMatchMode="contains">
+											<h:outputText value="#{list.pessoa.cpf}" />
+										</p:column>
+
+										<p:column headerText="Bairro"
+											filterBy="#{list.pessoa.bairro.nome}"
+											sortBy="#{list.pessoa.bairro.nome}"
+											filterMatchMode="contains">
+											<h:outputText value="#{list.pessoa.bairro.nome}" />
+										</p:column>
+
+										<p:column headerText="Cidade"
+											filterBy="#{list.pessoa.bairro.cidade.nome}"
+											sortBy="#{list.pessoa.bairro.cidade.nome}"
+											filterMatchMode="contains">
+											<h:outputText value="#{list.pessoa.bairro.cidade.nome}" />
+										</p:column>
+
+										<p:column headerText="Alterar" style="width:68px">
+											<p:commandButton alt="Alterar" icon="ui-icon-pencil"
+												update=":frmModalSalvar :frmModalAdicionarPermissao :frmModalTabelaPermissao" title="Alterar"
+												styleClass="btn btn-block"
+												oncomplete="PF('dlgCliente').show();"
+												actionListener="#{funcionarioMB.preencherLista(list)}">
+
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="Senha" style="width:68px">
+											<p:commandButton alt="Alterars" icon="ui-icon-pencil"
+												update=":frmModalSalvarSenha" title="Alterar"
+												styleClass="btn btn-block"
+												oncomplete="PF('dlgClienteSenha').show();"
+												actionListener="#{funcionarioMB.preencherLista(list)}">
+
+											</p:commandButton>
+										</p:column>
+										<p:column headerText="Inativar" style="width:68px">
+											<p:commandButton icon="ui-icon-trash" title="Excluir"
+												actionListener="#{funcionarioMB.inativarFuncionario(list)}"
+												styleClass="btn btn-block"
+												update=":frmTabela :dlgInformacao" alt="Excluir">
+												<p:confirm header="Confirmação" message="Deseja inativar?" />
+											</p:commandButton>
+										</p:column>
+
+
+
+									</p:dataTable>
+
+
+
+
+								</h:panelGrid>
+
+							</p:panel>
+						</p:tab>
+
+						<p:tab id="inativos" title="Inativos">
+							<p:panel header="Inativos">
+								<h:panelGrid columns="2" cellpadding="10">
+
+									<p:dataTable id="tabelaInat"
+										value="#{funcionarioMB.listFuncionarioInativos}"
+										resizableColumns="true" reflow="true" var="listInat" rows="10"
+										paginator="true" paginatorPosition="bottom"
+										emptyMessage="Nenhum registro encontrado"
+										rowsPerPageTemplate="5,10,15,30,50,100">
+
+										<p:column headerText="Ver" style="width:50px">
+											<p:commandButton update="frmDetalhesFuncionario"
+												styleClass="btn btn-block" title="Ver"
+												alt="detlhes funcionario" icon="ui-icon-search"
+												oncomplete="PF('dlgDetalhes').show()">
+												<f:setPropertyActionListener value="#{listInat}"
+													target="#{funcionarioMB.funcionario}" />
+											</p:commandButton>
+										</p:column>
+
+										<p:column headerText="nome" filterBy="#{listInat.pessoa.nome}"
+											sortBy="#{listInat.pessoa.nome}" filterMatchMode="contains">
+											<h:outputText value="#{listInat.pessoa.nome}" />
+										</p:column>
+
+										<p:column headerText="RG" filterBy="#{listInat.pessoa.rg}"
+											sortBy="#{listInat.pessoa.rg}" filterMatchMode="contains">
+											<h:outputText value="#{listInat.pessoa.rg}" />
+										</p:column>
+
+										<p:column headerText="CPF" filterBy="#{listInat.pessoa.cpf}"
+											sortBy="#{listInat.pessoa.cpf}" filterMatchMode="contains">
+											<h:outputText value="#{listInat.pessoa.cpf}" />
+										</p:column>
+
+										<p:column headerText="Bairro"
+											filterBy="#{listInat.pessoa.bairro.nome}"
+											sortBy="#{listInat.pessoa.bairro.nome}"
+											filterMatchMode="contains">
+											<h:outputText value="#{listInat.pessoa.bairro.nome}" />
+										</p:column>
+
+										<p:column headerText="Cidade"
+											filterBy="#{listInat.pessoa.bairro.cidade.nome}"
+											sortBy="#{listInat.pessoa.bairro.cidade.nome}"
+											filterMatchMode="contains">
+											<h:outputText value="#{listInat.pessoa.bairro.cidade.nome}" />
+										</p:column>
+
+										<p:column headerText="Ativar" style="width:68px">
+											<p:commandButton alt="Alterar" icon="ui-icon-pencil"
+												update=":frmTabela :dlgInformacao" title="Alterar"
+												styleClass="btn btn-block"
+												actionListener="#{funcionarioMB.ativarFuncionario(listInat)}">
+
+											</p:commandButton>
+										</p:column>
+										<p:column headerText="Excluir" style="width:68px">
+											<p:commandButton icon="ui-icon-trash" title="Excluir"
+												actionListener="#{funcionarioMB.excluirFuncionario(listInat)}"
+												styleClass="btn btn-block"
+												update=":frmTabela :dlgInformacao" alt="Excluir">
+												<p:confirm header="Confirmação" message="Deseja excluir o funcionário ? não será mais possivel recuperar as relações do mesmo" />
+											</p:commandButton>
+										</p:column>
+
+									</p:dataTable>
+								</h:panelGrid>
+							</p:panel>
+						</p:tab>
+					</p:wizard>
+				</h:form>
+
+			</div>
+			<!--FIM DA TABELA-->
+
+			<!-- DIALOG SALVAR -->
+			<p:dialog header="Funcionário" widgetVar="dlgCliente" modal="true"
+				responsive="true" width="60%" id="dlgCliente" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+
+
+				<div class="ui-fluid">
+
+					<h:form id="frmModalAdicionarPermissao">
+						<div class="col-md-12">
+							<label>Permissão Funcionário *</label>
+						</div>
+						<div class="col-md-9">
+							<p:autoComplete id="permissao" dropdown="true"
+								value="#{funcionarioMB.tipos}" scrollHeight="170"
+								completeMethod="#{funcionarioMB.completarTipos}"
+								forceSelection="true" converter="#{converterTipoPermissao}"
+								var="cur" itemLabel="#{cur.descricao}" itemValue="#{cur}">
+
+								<p:ajax event="itemSelect"
+									listener="#{funcionarioMB.controle()}" update="botaoAdd" />
+
+							</p:autoComplete>
+						</div>
+
+						<div class="col-md-2" style="margin-left: 25px; width: 22%;">
+							<p:commandButton id="botaoAdd" value="Cadastrar"
+								update=":frmModalAdicionarPermissao :dlgInformacao :frmModalTabelaPermissao"
+								styleClass="ui-priority-primary" alt="Sim"
+								actionListener="#{funcionarioMB.adicionarPermissao()}"
+								disabled="#{funcionarioMB.controleAddTipo}" />
+
+						</div>
+					</h:form>
+
+					<h:form id="frmModalTabelaPermissao">
+
+						<div class="col-md-12">
+							<label></label>
+
+							<p:dataTable id="tabelaPermissao"
+								value="#{funcionarioMB.listPermissoes}" resizableColumns="true"
+								reflow="true" var="l" paginatorPosition="bottom"
+								emptyMessage="Nenhuma permissão adicionada">
+
+
+								<p:column headerText="Permissao" style="width:68px">
+									<h:outputText value="#{l.descricao}" />
+								</p:column>
+								<p:column headerText="Observação" style="width:100px">
+									<h:outputText value="#{l.observacao}" />
+								</p:column>
+								<p:column headerText="Excluir" style="width:68px">
+									<p:commandButton
+										actionListener="#{funcionarioMB.removePermissao(l)}"
+										icon="ui-icon-trash" title="Excluir"
+										styleClass="btn btn-block"
+										update=":dlgInformacao :frmModalTabelaPermissao" alt="Excluir">
+
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+
+						</div>
+
+
+
+					</h:form>
+
+				</div>
+
+
+
+
+
+
+				<h:form id="frmModalSalvar">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<h:outputLabel value="Nome: *" />
+							<p:inputText title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.nome}" required="true"
+								requiredMessage="Informe o nome" />
+
+
+						</div>
+						<div class="col-md-12">
+							<label>E-mail: *</label>
+							<p:inputText title="Nome" id="email" required="true" requiredMessage="O Campo email não deve ser nulo"
+								value="#{funcionarioMB.funcionarioPessoa.usuario}" />
+						</div>
+
+						<div class="col-md-6">
+							<label>CPF: *</label>
+							<p:inputMask   mask="999.999.999-99"
+								id="cpf" title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.cpf}" />
+						</div>
+
+						<div class="col-md-6">
+							<label>RG: *</label>
+							<p:inputText title="Nome" id="rg"
+								value="#{funcionarioMB.funcionarioPessoa.rg}"  />
+						</div>
+
+						<div class="col-md-6">
+							<label>Telefone: </label>
+							<p:inputText title="Nome" id="telefone"
+								value="#{funcionarioMB.funcionarioPessoa.telefone}"
+								 />
+						</div>
+
+						<div class="col-md-6">
+							<label>Celular: </label>
+							<p:inputText title="Nome" id="celular"
+								value="#{funcionarioMB.funcionarioPessoa.celular}"
+								 />
+						</div>
+
+						<div class="col-md-6">
+
+							<h:outputLabel value="Senha: *" rendered="#{funcionarioMB.senha}" />
+							<p:password value="#{funcionarioMB.funcionario.senha}"
+								match="confirmesenha" id="senha"
+								validatorMessage="senhas não conferem" feedback="true"
+								weakLabel="Fraca" goodLabel="Media" strongLabel="Forte"
+								required="true" requiredMessage="Informe a Senha"
+								promptLabel="Digite sua senha" rendered="#{funcionarioMB.senha}" />
+						</div>
+						<div class="col-md-6">
+							<h:outputLabel value="Confirma Senha: *"
+								rendered="#{funcionarioMB.senha}" />
+							<p:password value="#{funcionarioMB.funcionario.senha}"
+								id="confirmesenha" feedback="true" weakLabel="Fraca"
+								goodLabel="Media" strongLabel="Forte"
+								promptLabel="Confirme sua senha"
+								rendered="#{funcionarioMB.senha}" />
+
+						</div>
+
+						<div class="col-md-12">
+							<h:outputLabel value="Cidade:" />
+							<p:selectOneMenu id="estado" value="#{funcionarioMB.cidade}"
+								required="true" requiredMessage="selecione uma Cidade"
+								converter="#{converterCidade}">
+								<f:selectItem itemLabel="Selecione uma Cidade" />
+								<f:selectItems value="#{funcionarioMB.listCidade}" var="cid"
+									itemValue="#{cid}" itemLabel="#{cid.nome}" />
+
+								<p:ajax event="change" update="bairr"
+									listener="#{funcionarioMB.buscarBairro()}" />
+
+							</p:selectOneMenu>
+
+						</div>
+
+						<div class="col-md-12">
+							<h:outputLabel value="Bairro:" />
+							<p:selectOneMenu id="bairr"
+								value="#{funcionarioMB.funcionarioPessoa.bairro}"
+								disabled="#{funcionarioMB.controleBairro}" required="true"
+								requiredMessage="selecione um Bairro"
+								converter="#{converterBairro}">
+								<f:selectItem itemLabel="Selecione um Bairro" />
+								<f:selectItems value="#{funcionarioMB.listBairro}" var="cid"
+									itemValue="#{cid}" itemLabel="#{cid.nome}" />
+
+							</p:selectOneMenu>
+
+						</div>
+						<div class="col-md-6">
+							<h:outputLabel rendered="#{funcionarioMB.cadastroExistente}"
+								value="Rua: " />
+							<p:inputText title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.rua}" />
+						</div>
+						<div class="col-md-6">
+							<h:outputLabel value="Número: " />
+							<p:inputText title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.numero}" />
+						</div>
+						<div class="col-md-12">
+							<h:outputLabel value="Complemento: *" />
+							<p:inputText title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.endereco}" />
+						</div>
+						<div class="col-md-12">
+
+							<small>Campos obrigatórios *</small>
+						</div>
+
+
+
+					</div>
+
+					<h:outputLabel value="" />
+					<div class="modal-footer">
+						<p:commandButton value="Salvar"
+							actionListener="#{funcionarioMB.salvar()}"
+							styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmTabela" />
+
+
+						<p:commandButton value="Tornar Cliente"
+							actionListener="#{funcionarioMB.tornarCliente()}"
+							styleClass="ui-priority-primary"
+							rendered="#{funcionarioMB.controleAdd}"
+							update=":dlgInformacao :frmTabela" />
+					</div>
+
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG SALVAR -->
+
+
+			<!-- DIALOG SALVAR senha-->
+			<p:dialog header="Senha" widgetVar="dlgClienteSenha" modal="true"
+				responsive="true" width="60%" id="dlgClienteSenha" closable="true"
+				closeOnEscape="true" resizable="false" draggable="false">
+				<h:form id="frmModalSalvarSenha">
+					<div class="ui-fluid">
+						<div class="col-md-12">
+							<label>Nome: *</label>
+							<h:outputText title="Nome"
+								value="#{funcionarioMB.funcionarioPessoa.nome}" rendered="true" />
+						</div>
+
+
+
+						<div class="col-md-6">
+
+							<label>Senha: *</label>
+							<p:password value="#{funcionarioMB.funcionario.senha}"
+								match="confirmesenhas" id="senhass"
+								validatorMessage="senhas não conferem" feedback="true"
+								weakLabel="Fraca" goodLabel="Media" strongLabel="Forte"
+								promptLabel="Digite sua senha" />
+						</div>
+						<div class="col-md-6">
+							<label>Confirma Senha: *</label>
+							<p:password value="#{funcionarioMB.funcionario.senha}"
+								id="confirmesenhas" feedback="true" weakLabel="Fraca"
+								goodLabel="Media" strongLabel="Forte"
+								promptLabel="Confirme sua senha" />
+
+						</div>
+
+						<small>Campos obrigatórios *</small>
+					</div>
+					<div class="modal-footer">
+						<p:commandButton value="Salvar"
+							actionListener="#{funcionarioMB.salvarSenha()}"
+							styleClass="ui-priority-primary"
+							update=":dlgInformacao :frmTabela" />
+
+						<p:commandButton value="Cancelar"
+							onclick="PF('dlgClienteSenha').hide();" alt="Cancelar" />
+					</div>
+				</h:form>
+			</p:dialog>
+			<!-- FIM DO DIALOG SALVAR senha-->
+
+			<!-- DIALOG DETALHES -->
+			<p:dialog header="Funcionário" widgetVar="dlgDetalhes" modal="true"
+				closeOnEscape="true" resizable="false" closable="true"
+				draggable="false">
+				<p:outputPanel id="funcionarioDetalhe">
+					<h:form id="frmDetalhesFuncionario">
+						<h:panelGrid columns="2">
+							<label>Nome: </label>
+							<h:outputText value="#{funcionarioMB.funcionario.pessoa.nome}" />
+
+							<label>RG: </label>
+							<h:outputText value="#{funcionarioMB.funcionario.pessoa.rg}" />
+
+							<label>CPF: </label>
+							<h:outputText value="#{funcionarioMB.funcionario.pessoa.cpf}" />
+
+							<label>E-mail: </label>
+							<h:outputText value="#{funcionarioMB.funcionario.pessoa.usuario}" />
+
+
+
+						</h:panelGrid>
+					</h:form>
+				</p:outputPanel>
+			</p:dialog>
+			<!-- FIM DO DIALOG DETALHES -->
+
+
+		</ui:define>
+
+		<ui:define name="modal-confirmacao">
+			<ui:include src="../componentes/dialog-confirmacao.xhtml" />
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>
+
